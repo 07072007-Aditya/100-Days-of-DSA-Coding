@@ -1,0 +1,73 @@
+/*
+Problem Statement
+Given weighted undirected graph, compute total weight of Minimum Spanning Tree using Prim’s algorithm.
+*/
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX 1000
+
+int graph[MAX][MAX];
+int n, m;
+
+int minKey(int key[], int visited[]) {
+    int min = INT_MAX, min_index;
+
+    for (int i = 0; i < n; i++) {
+        if (!visited[i] && key[i] < min) {
+            min = key[i];
+            min_index = i;
+        }
+    }
+    return min_index;
+}
+
+int primMST() {
+    int key[MAX];       // Minimum weight to include node
+    int visited[MAX];   // MST set
+
+    for (int i = 0; i < n; i++) {
+        key[i] = INT_MAX;
+        visited[i] = 0;
+    }
+
+    key[0] = 0;  // Start from node 0
+
+    int totalWeight = 0;
+
+    for (int count = 0; count < n; count++) {
+        int u = minKey(key, visited);
+        visited[u] = 1;
+
+        totalWeight += key[u];
+
+        for (int v = 0; v < n; v++) {
+            if (graph[u][v] && !visited[v] && graph[u][v] < key[v]) {
+                key[v] = graph[u][v];
+            }
+        }
+    }
+
+    return totalWeight;
+}
+
+int main() {
+    scanf("%d %d", &n, &m);
+
+    // Initialize graph
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            graph[i][j] = 0;
+
+    // Input edges
+    for (int i = 0; i < m; i++) {
+        int u, v, w;
+        scanf("%d %d %d", &u, &v, &w);
+        graph[u][v] = w;
+        graph[v][u] = w;
+    }
+
+    printf("%d\n", primMST());
+
+    return 0;
+}
